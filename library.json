@@ -1,0 +1,34 @@
+{
+  "name": "ravensnight lib-async",
+  "version": "0.0.1",
+  "description": "ESP32 Async and Queue Framework.",
+  "keywords": "esp32 async threads queue",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/ravensnight/de.ravensnight.arduino.lib-async"
+  }, 
+  "authors":
+  [
+    {
+      "name": "ravensnight",
+      "email": "ravensnight@hoheisels-welt.de",
+      "url": ""
+    }
+  ],
+  "license": "MIT",
+  "dependencies": [
+    {
+      "name": "ravensnight lib-logging",
+      "version": "1.2.1",
+      "platforms": ["espressif32"]
+    },
+    {
+      "name": "ravensnight lib-utils",
+      "version": "1.1.7",
+      "platforms": ["espressif32"]
+    } 
+
+  ],
+  "frameworks": "arduino",
+  "platforms": "espressif32"
+}

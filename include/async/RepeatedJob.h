@@ -1,3 +1,7 @@
+#ifndef __RepeatedJob_h__
+#define __RepeatedJob_h__
+
+#include <Arduino.h>
 #include <async/Job.h>
 
 namespace ravensnight::async {
@@ -17,3 +21,5 @@ namespace ravensnight::async {
     };
 
 }
+
+#endif // __RepeatedJob_h__

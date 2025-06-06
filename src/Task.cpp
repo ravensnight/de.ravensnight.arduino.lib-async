@@ -7,8 +7,8 @@ void __task_runner( void* param ) {
     runnable->run();
 }
 
-Task::Task(const char* name, uint8_t priority, uint32_t stackSize, Job& runnable) {
-    _runnable = &runnable;
+Task::Task(const char* name, uint8_t priority, uint32_t stackSize, Job* runnable) {
+    _runnable = runnable;
     _name = name;
     _stackSize = stackSize;
     _priority = priority;

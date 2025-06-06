@@ -13,14 +13,14 @@ namespace ravensnight::async {
     }
 
     void Mutex::lock() {
-        Logger::debug("Mutex::lock(%s) - waiting... ", _name);
+        // Logger::debug("Mutex::lock(%s) - waiting... ", _name);
         _mtx.lock();
-        Logger::debug("Mutex::lock(%s) - locked", _name);
+        // Logger::debug("Mutex::lock(%s) - locked", _name);
     }
 
     void Mutex::unlock() {
         _mtx.unlock();
-        Logger::debug("Mutex::unlock(%s) - unlocked", _name);
+        // Logger::debug("Mutex::unlock(%s) - unlocked", _name);
     }
 }
 

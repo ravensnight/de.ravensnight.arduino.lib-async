@@ -3,8 +3,6 @@
 
 #include <Arduino.h>
 #include <Logger.h>
-#include <async/Mutex.h>
-#include <async/LockGuard.h>
 
 using namespace ravensnight::logging;
 
@@ -25,12 +23,10 @@ namespace ravensnight::async {
     class Queue {
 
         private:
-            Mutex _mutex;
             size_t _length;
             bool _useHeap;
             uint32_t _ticks;
             QueueHandle_t _queue;
-            QueueMsg _msg;
 
             /**
              * Push some element to queue.
@@ -44,19 +40,37 @@ namespace ravensnight::async {
                     return false;
                 }
 
-                synchronized(_mutex);
+                QueueMsg msg = {
+                    .len = len,
+                    .ptr = (uint8_t*)malloc(len)
+                };
 
-                _msg.len = len,
-                _msg.ptr = (uint8_t*)malloc(len);
-
-                memcpy(_msg.ptr, ptr, len);
-
-                if (xQueueSend(_queue, &_msg, _ticks) != pdPASS) {
+                memcpy(msg.ptr, ptr, len);
+                if (xQueueSend(_queue, &msg, _ticks) != pdPASS) {
                     Logger::error("Failed to send item to task queue.");
-                    free(_msg.ptr);
-                    _msg.ptr = 0;
-                    _msg.len = 0;
+                    free(msg.ptr);
+                    msg.ptr = 0;
+                    msg.len = 0;
 
+                    return false;
+                }
+
+                return true;                
+            }
+
+            /**
+             * Push some element to queue.
+             * Note: 
+             * This function sends the msg directly without passing pointers.
+             */
+            bool pushDirect(const T& msg) {
+                if (_queue == 0) {
+                    Logger::warn("Queue not created. Return.");
+                    return false;
+                }
+
+                if (xQueueSend(_queue, &msg, _ticks) != pdPASS) {
+                    Logger::error("Failed to send direct item to task queue.");
                     return false;
                 }
 
@@ -68,16 +82,18 @@ namespace ravensnight::async {
             /**
              * Create a new queue with the given length;
              */
-            Queue(size_t length) : _mutex("Queue") {
-               _length = length;
+            Queue(size_t length, boolean useHeap) {
+                _length = length;
                 _queue = 0;
                 _ticks = 0;
+                _useHeap = useHeap;
             }
 
-            Queue(size_t length, uint32_t waitForMS) : _mutex("Queue") {
-                 _length = length;
+            Queue(size_t length, boolean useHeap, uint32_t waitForMS) {
+                _length = length;                
                 _queue = 0;
                 _ticks = pdMS_TO_TICKS( waitForMS );
+                _useHeap = useHeap;
             }
 
             /**
@@ -89,7 +105,11 @@ namespace ravensnight::async {
                     return false;
                 }
 
-                _queue = xQueueCreate(_length, sizeof( QueueMsg ));
+                if (_useHeap) {
+                    _queue = xQueueCreate(_length, sizeof( QueueMsg ));
+                } else {
+                    _queue = xQueueCreate(_length, sizeof( T ));
+                }
                 return (_queue != 0);
             }
 
@@ -107,7 +127,11 @@ namespace ravensnight::async {
              * Receiver needs to delete it!
              */
             bool push(const T& element) {
-                return push((const uint8_t*)&element, (size_t)sizeof( T ));
+                if (_useHeap) {
+                    return push((const uint8_t*)&element, (size_t)sizeof( T ));
+                } else {
+                    return pushDirect(element);
+                }
             }
 
             /**

@@ -18,7 +18,7 @@ namespace ravensnight::async {
 
         public:
 
-            Task(const char* name, uint8_t priority, uint32_t stackSize, Job& runnable);
+            Task(const char* name, uint8_t priority, uint32_t stackSize, Job* runnable);
 
             void start();
             void kill();

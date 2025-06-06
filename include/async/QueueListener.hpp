@@ -15,12 +15,14 @@ namespace ravensnight::async {
         private:
             Receiver<T>* _receiver;
             Queue<T>* _queue;
+            bool _useHeap;
 
         public:
 
-            QueueListener(Queue<T>& queue, Receiver<T>* receiver) {
-                _receiver = receiver;
+            QueueListener(Queue<T>& queue, Receiver<T>& receiver, bool useHeap) {
+                _receiver = &receiver;
                 _queue = &queue;
+                _useHeap = useHeap;
             }
 
             void run() {
@@ -29,15 +31,24 @@ namespace ravensnight::async {
                     return;
                 }
 
-                QueueMsg msg;
-                while (xQueueReceive(h, &msg, portMAX_DELAY)) {
+                if (_useHeap) {
+                    QueueMsg msg1;
+                    while (xQueueReceive(h, &msg1, portMAX_DELAY)) {
 
-                    T& payload = *((T*)msg.ptr);
-                    _receiver->handle(payload);
+                        T& payload = *((T*)(msg1.ptr));
+                        _receiver->handle(payload);
 
-                    Logger::debug("Handled queue message. Destroy message.");
-                    free(msg.ptr);  // remove the message after its handled.
+                        Logger::debug("Handled queue message. Destroy message.");
+                        free(msg1.ptr);  // remove the message after its handled.
+                    }
+                } else {
+                    T msg2;
+                    while (xQueueReceive(h, &msg2, portMAX_DELAY)) {
+                        _receiver->handle(msg2);
+                    }
                 }
+
+
             }
     };
 

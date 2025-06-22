@@ -11,7 +11,7 @@ namespace ravensnight::async {
         private:
 
             uint32_t _ticksDelay;
-
+            
         public:
 
             RepeatedJob(uint32_t delay);            

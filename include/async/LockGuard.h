@@ -8,15 +8,15 @@ namespace ravensnight::async {
     class LockGuard {
 
         private:
-            Mutex* _mtx;
+            Lockable* _mtx;
 
         public:
 
-            LockGuard(Mutex& mtx);
+            LockGuard(Lockable* mtx);
             ~LockGuard();
     };
 
-    #define synchronized(mutex) const ravensnight::async::LockGuard __lockguard(mutex)
+    #define acquirelock(lockable) const ravensnight::async::LockGuard __lockguard(&lockable)
 }
 
 #endif // __LockGuard_h__

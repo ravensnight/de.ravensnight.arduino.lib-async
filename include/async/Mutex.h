@@ -3,10 +3,11 @@
 
 #include <Arduino.h>
 #include <mutex>
+#include <async/Lockable.h>
 
 namespace ravensnight::async {
 
-    class Mutex {
+    class Mutex : public Lockable {
 
         private:
 

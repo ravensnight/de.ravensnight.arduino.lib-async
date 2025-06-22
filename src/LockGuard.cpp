@@ -6,9 +6,9 @@ using namespace ravensnight::logging;
 
 namespace ravensnight::async {
 
-    LockGuard::LockGuard(Mutex& mtx) {
+    LockGuard::LockGuard(Lockable* lockable) {
         //Logger::debug("LockGuard::LockGuard - lock");
-        _mtx = &mtx;
+        _mtx = lockable;
         _mtx->lock();
     }
 

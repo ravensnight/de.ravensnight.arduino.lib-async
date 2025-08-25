@@ -1,12 +1,12 @@
-#ifndef __RepeatedJob_h__
-#define __RepeatedJob_h__
+#ifndef __Scheduled_h__
+#define __Scheduled_h__
 
 #include <Arduino.h>
-#include <async/Job.h>
+#include <async/Runnable.h>
 
 namespace ravensnight::async {
 
-    class RepeatedJob : public Job {
+    class Scheduled : public Runnable {
 
         private:
 
@@ -14,7 +14,7 @@ namespace ravensnight::async {
             
         public:
 
-            RepeatedJob(uint32_t delay);            
+            Scheduled(uint32_t delay);            
             void run();
 
             virtual void execute() = 0;
@@ -22,4 +22,4 @@ namespace ravensnight::async {
 
 }
 
-#endif // __RepeatedJob_h__
+#endif // __Scheduled_h__

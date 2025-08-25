@@ -3,23 +3,57 @@
 
 #include <Logger.h>
 
-#include <async/Job.h>
+#include <async/Runnable.h>
 #include <async/Queue.hpp>
+#include <async/Mutex.h>
 
 using namespace ravensnight::logging;
 
 namespace ravensnight::async {
 
     template <class T>
-    class QueueListener : public Job {
+    class QueueListener : public Runnable {
         private:
             Receiver<T>* _receiver;
             Queue<T>* _queue;
             bool _useHeap;
+            Mutex _mutex;
+
+            void runOnStack(QueueHandle_t& h) {
+                BaseType_t status;
+                T msg2;
+                while (true) {
+                    status = xQueueReceive(h, &msg2, portMAX_DELAY);
+                    if (status != pdPASS) continue;
+                    
+                    _mutex.lock();
+                    _receiver->handle(msg2);
+                    _mutex.unlock();
+                }
+            }
+
+            void runOnHeap(QueueHandle_t& h) {
+                BaseType_t status;
+                QueueMsg msg1;
+                while (true) {
+
+                    status = xQueueReceive(h, &msg1, portMAX_DELAY);
+                    if (status != pdPASS) continue;
+                    _mutex.lock();
+
+                    T& payload = *((T*)(msg1.ptr));
+                    _receiver->handle(payload);
+
+                    Logger::debug("Handled queue message and destroy.");
+                    free(msg1.ptr);  // remove the message after its handled.
+                    
+                    _mutex.unlock();
+                }
+            }
 
         public:
 
-            QueueListener(Queue<T>& queue, Receiver<T>& receiver, bool useHeap) {
+            QueueListener(Queue<T>& queue, Receiver<T>& receiver, bool useHeap) : _mutex("QueueListener") {
                 _receiver = &receiver;
                 _queue = &queue;
                 _useHeap = useHeap;
@@ -32,23 +66,10 @@ namespace ravensnight::async {
                 }
 
                 if (_useHeap) {
-                    QueueMsg msg1;
-                    while (xQueueReceive(h, &msg1, portMAX_DELAY)) {
-
-                        T& payload = *((T*)(msg1.ptr));
-                        _receiver->handle(payload);
-
-                        Logger::debug("Handled queue message. Destroy message.");
-                        free(msg1.ptr);  // remove the message after its handled.
-                    }
+                    runOnHeap(h);
                 } else {
-                    T msg2;
-                    while (xQueueReceive(h, &msg2, portMAX_DELAY)) {
-                        _receiver->handle(msg2);
-                    }
+                    runOnStack(h);
                 }
-
-
             }
     };
 

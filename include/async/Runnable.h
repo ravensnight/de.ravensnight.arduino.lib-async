@@ -1,11 +1,11 @@
-#ifndef __Job_h__
-#define  __Job_h__
+#ifndef __Runnable_h__
+#define  __Runnable_h__
 
 #include <Arduino.h>
 
 namespace ravensnight::async {
     
-    class Job {
+    class Runnable {
         public:
             virtual void run() = 0;
     };

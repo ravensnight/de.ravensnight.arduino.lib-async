@@ -1,12 +1,12 @@
-#include <async/RepeatedJob.h>
+#include <async/Scheduled.h>
 
 using namespace ravensnight::async;
 
-RepeatedJob::RepeatedJob(uint32_t delayInMS) {
+Scheduled::Scheduled(uint32_t delayInMS) {
     _ticksDelay = pdMS_TO_TICKS( delayInMS );
 }
 
-void RepeatedJob::run() {
+void Scheduled::run() {
     while (1) {
         vTaskDelay(_ticksDelay);
         execute();

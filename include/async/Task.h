@@ -13,15 +13,13 @@ namespace ravensnight::async {
 
             Mutex _mutex;
             const char* _name;
-            uint8_t _priority;
-            uint32_t _stackSize;
             TaskHandle_t _handle;
 
         public:
 
-            Task(const char* name, uint8_t priority, uint32_t stackSize);
+            Task(const char* name);
 
-            void start(Runnable* runnable);
+            void start(Runnable* runnable, uint8_t priority, uint32_t stackSize);
             void kill();
     };
 

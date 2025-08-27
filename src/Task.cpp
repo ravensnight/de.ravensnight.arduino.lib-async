@@ -10,20 +10,18 @@ namespace ravensnight::async
         runnable->run();
     }
 
-    Task::Task(const char *name, uint8_t priority, uint32_t stackSize) : _mutex(name)
+    Task::Task(const char *name) : _mutex(name)
     {
         _name = name;
-        _stackSize = stackSize;
-        _priority = priority;
         _handle = 0;
     }
 
-    void Task::start(Runnable* runnable)
+    void Task::start(Runnable* runnable, uint8_t priority, uint32_t stackSize)
     {
         acquirelock(_mutex);
         if (_handle == 0)
         {
-            xTaskCreate(&__task_runner, _name, _stackSize, runnable, 2, &_handle);
+            xTaskCreate(&__task_runner, _name, stackSize, runnable, priority, &_handle);
         }
     }
 

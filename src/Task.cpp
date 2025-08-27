@@ -1,4 +1,5 @@
 #include <async/Task.h>
+#include <async/LockGuard.h>
 
 namespace ravensnight::async
 {
@@ -9,28 +10,30 @@ namespace ravensnight::async
         runnable->run();
     }
 
-    Task::Task(const char *name, uint8_t priority, uint32_t stackSize, Runnable *runnable)
+    Task::Task(const char *name, uint8_t priority, uint32_t stackSize) : _mutex(name)
     {
-        _runnable = runnable;
         _name = name;
         _stackSize = stackSize;
         _priority = priority;
         _handle = 0;
     }
 
-    void Task::start()
+    void Task::start(Runnable* runnable)
     {
+        acquirelock(_mutex);
         if (_handle == 0)
         {
-            xTaskCreate(&__task_runner, _name, _stackSize, _runnable, 2, &_handle);
+            xTaskCreate(&__task_runner, _name, _stackSize, runnable, 2, &_handle);
         }
     }
 
     void Task::kill()
     {
+        acquirelock(_mutex);
         if (_handle != 0)
         {
             vTaskDelete(_handle);
+            _handle = 0;
         }
     }
 

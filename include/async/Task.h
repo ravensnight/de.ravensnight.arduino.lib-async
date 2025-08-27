@@ -2,6 +2,7 @@
 #define  __Task_h__
 
 #include <Arduino.h>
+#include <async/Mutex.h>
 #include <async/Runnable.h>
 
 namespace ravensnight::async {
@@ -10,17 +11,17 @@ namespace ravensnight::async {
 
         private: 
 
+            Mutex _mutex;
             const char* _name;
             uint8_t _priority;
             uint32_t _stackSize;
-            Runnable* _runnable;
             TaskHandle_t _handle;
 
         public:
 
-            Task(const char* name, uint8_t priority, uint32_t stackSize, Runnable* runnable);
+            Task(const char* name, uint8_t priority, uint32_t stackSize);
 
-            void start();
+            void start(Runnable* runnable);
             void kill();
     };
 

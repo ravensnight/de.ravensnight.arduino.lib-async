@@ -101,8 +101,8 @@ namespace ravensnight::async {
              */
             bool install() {
                 if (_queue != 0) {
-                    Logger::warn("Queue already installed. Skip.");
-                    return false;
+                    Logger::info("Queue already installed. Skip.");
+                    return true;
                 }
 
                 if (_useHeap) {
@@ -110,6 +110,7 @@ namespace ravensnight::async {
                 } else {
                     _queue = xQueueCreate(_length, sizeof( T ));
                 }
+                
                 return (_queue != 0);
             }
 

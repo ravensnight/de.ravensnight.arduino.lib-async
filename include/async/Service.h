@@ -3,7 +3,6 @@
 
 #include <async/Runnable.h>
 #include <async/Task.h>
-#include <async/Mutex.h>
 
 namespace ravensnight::async {
 
@@ -11,7 +10,6 @@ namespace ravensnight::async {
 
         private:
 
-            Mutex _mutex;
             Runnable* _runnable = 0;
             Task _task;
 
@@ -24,17 +22,20 @@ namespace ravensnight::async {
             virtual uint32_t getStackSize() = 0;
             virtual Runnable* createRunnable()  = 0;
 
+            virtual bool preInstall();
+            virtual void postUninstall();
+
         public:
 
             /**
              * Install the service
              */
-            virtual bool install();
+            bool install();
 
             /**
              * Remove the service.
              */
-            virtual void uninstall();
+            void uninstall();
     };
 }
 

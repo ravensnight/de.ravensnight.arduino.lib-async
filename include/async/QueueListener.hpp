@@ -14,9 +14,9 @@ namespace ravensnight::async {
     template <class T>
     class QueueListener : public Runnable {
         private:
-            Receiver<T>* _receiver;
-            Queue<T>* _queue;
-            bool _useHeap;
+            Receiver<T>* _receiver = 0;
+            Queue<T>* _queue = 0;
+            bool _useHeap = false;
             Mutex _mutex;
 
             void runOnStack(QueueHandle_t& h) {
@@ -53,9 +53,9 @@ namespace ravensnight::async {
 
         public:
 
-            QueueListener(Queue<T>& queue, Receiver<T>& receiver, bool useHeap) : _mutex("QueueListener") {
-                _receiver = &receiver;
-                _queue = &queue;
+            QueueListener(Queue<T>* queue, Receiver<T>* receiver, bool useHeap) : _mutex("QueueListener") {
+                _receiver = receiver;
+                _queue = queue;
                 _useHeap = useHeap;
             }
 

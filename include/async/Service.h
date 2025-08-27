@@ -20,9 +20,11 @@ namespace ravensnight::async {
 
         protected:
 
-            Service(const char* name, uint8_t priority, uint32_t stackSize);
+            Service(const char* name);
             ~Service();
 
+            virtual uint8_t getPriority();
+            virtual uint32_t getStackSize();
             virtual Runnable* createRunnable();
 
         public:

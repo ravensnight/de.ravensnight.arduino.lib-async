@@ -12,9 +12,6 @@ namespace ravensnight::async {
         private:
 
             Mutex _mutex;
-            uint8_t _priority;
-            uint32_t _stackSize;
-
             Runnable* _runnable = 0;
             Task _task;
 
@@ -32,12 +29,12 @@ namespace ravensnight::async {
             /**
              * Install the service
              */
-            bool install();
+            virtual bool install();
 
             /**
              * Remove the service.
              */
-            void uninstall();
+            virtual void uninstall();
     };
 }
 

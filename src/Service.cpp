@@ -3,29 +3,20 @@
 
 using namespace ravensnight::async;
 
-Service::Service(const char *name, uint8_t priority, uint32_t stackSize) : _task(name), _mutex(name)
-{
-    _priority = priority;
-    _stackSize = stackSize;
+Service::Service(const char *name) : _task(name), _mutex(name) {
 }
 
 Service::~Service()
 {
-    if (_runnable != 0) {
-        _task.kill();
-
-        delete _runnable;
-        _runnable = 0;
-    }
+    uninstall();
 }
 
 bool Service::install()
 {
     acquirelock(_mutex);
-
     if (_runnable == 0) {
         _runnable = createRunnable();
-        _task.start(_runnable, _priority, _stackSize);
+        _task.start(_runnable, getPriority(), getStackSize());
         return true;
     }
 

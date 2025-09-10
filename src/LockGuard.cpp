@@ -1,20 +1,20 @@
 #include <async/LockGuard.h>
-
-#include <Logger.h>
+#include <async/LoggerConfig.h>
 
 using namespace ravensnight::logging;
 
 namespace ravensnight::async {
 
     LockGuard::LockGuard(Lockable* lockable) {
-        //Logger::debug("LockGuard::LockGuard - lock");
+        _logger.trace("LockGuard - lock");
         _mtx = lockable;
         _mtx->lock();
     }
 
     LockGuard::~LockGuard() {
-        //Logger::debug("LockGuard::~LockGuard - unlock");
+        _logger.trace("LockGuard - unlock");
         _mtx->unlock();
     }
 
+    ClassLogger LockGuard::_logger(LC_ASYNC);
 }

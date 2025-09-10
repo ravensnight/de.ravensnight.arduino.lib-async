@@ -1,6 +1,7 @@
 #ifndef __LockGuard_h__
 #define __LockGuard_h__
 
+#include <ClassLogger.h>
 #include <async/Mutex.h>
 
 namespace ravensnight::async {
@@ -8,6 +9,7 @@ namespace ravensnight::async {
     class LockGuard {
 
         private:
+            static ClassLogger _logger;
             Lockable* _mtx;
 
         public:

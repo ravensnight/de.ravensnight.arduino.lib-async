@@ -1,6 +1,6 @@
 #include <async/Service.h>
+#include <async/LoggerConfig.h>
 #include <async/LockGuard.h>
-#include <Logger.h>
 
 using namespace ravensnight::async;
 using namespace ravensnight::logging;
@@ -28,7 +28,7 @@ bool Service::install()
         if (_runnable != 0) {
             _task.start(_runnable, getPriority(), getStackSize());
         } else {
-            Logger::error("Service::install - createRunnable returned NULL.");
+            _logger.error("Service::install - createRunnable returned NULL.");
             return false;
         }
 
@@ -51,3 +51,5 @@ void Service::uninstall()
 
     postUninstall();
 }
+
+ClassLogger Service::_logger(LC_ASYNC);

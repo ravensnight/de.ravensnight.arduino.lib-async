@@ -1,7 +1,8 @@
 #ifndef __QueueListener_h__
 #define __QueueListener_h__
 
-#include <Logger.h>
+#include <ClassLogger.h>
+#include <async/LoggerConfig.h>
 
 #include <async/Runnable.h>
 #include <async/Queue.hpp>
@@ -14,6 +15,8 @@ namespace ravensnight::async {
     template <class T>
     class QueueListener : public Runnable {
         private:
+            static ClassLogger _logger;
+
             Receiver<T>* _receiver = 0;
             Queue<T>* _queue = 0;
             bool _useHeap = false;
@@ -44,7 +47,7 @@ namespace ravensnight::async {
                     T& payload = *((T*)(msg1.ptr));
                     _receiver->handle(payload);
 
-                    Logger::debug("Handled queue message and destroy.");
+                    _logger.debug("Handled queue message and destroy.");
                     free(msg1.ptr);  // remove the message after its handled.
                     
                     _mutex.unlock();
@@ -73,6 +76,8 @@ namespace ravensnight::async {
             }
     };
 
+    template <class T>
+    ClassLogger QueueListener<T>::_logger(LC_ASYNC);
 }
 
 #endif //  __QueueListener_h__

@@ -2,7 +2,8 @@
 #define __Queue_h__
 
 #include <Arduino.h>
-#include <Logger.h>
+#include <ClassLogger.h>
+#include <async/LoggerConfig.h>
 
 using namespace ravensnight::logging;
 
@@ -23,6 +24,7 @@ namespace ravensnight::async {
     class Queue {
 
         private:
+            static ClassLogger _logger;
             size_t _length;
             bool _useHeap;
             uint32_t _ticks;
@@ -36,7 +38,7 @@ namespace ravensnight::async {
              */
             bool push(const uint8_t* ptr, size_t len) {
                 if (_queue == 0) {
-                    Logger::warn("Queue not created. Return.");
+                    _logger.warn("Queue not created. Return.");
                     return false;
                 }
 
@@ -47,7 +49,7 @@ namespace ravensnight::async {
 
                 memcpy(msg.ptr, ptr, len);
                 if (xQueueSend(_queue, &msg, _ticks) != pdPASS) {
-                    Logger::error("Failed to send item to task queue.");
+                    _logger.error("Failed to send item to task queue.");
                     free(msg.ptr);
                     msg.ptr = 0;
                     msg.len = 0;
@@ -65,12 +67,12 @@ namespace ravensnight::async {
              */
             bool pushDirect(const T& msg) {
                 if (_queue == 0) {
-                    Logger::warn("Queue not created. Return.");
+                    _logger.warn("Queue not created. Return.");
                     return false;
                 }
 
                 if (xQueueSend(_queue, &msg, _ticks) != pdPASS) {
-                    Logger::error("Failed to send direct item to task queue.");
+                    _logger.error("Failed to send direct item to task queue.");
                     return false;
                 }
 
@@ -101,7 +103,7 @@ namespace ravensnight::async {
              */
             bool install() {
                 if (_queue != 0) {
-                    Logger::info("Queue already installed. Skip.");
+                    _logger.info("Queue already installed. Skip.");
                     return true;
                 }
 
@@ -142,6 +144,9 @@ namespace ravensnight::async {
                 push(element);
             }
     };
+
+    template <class T>
+    ClassLogger Queue<T>::_logger(LC_ASYNC);
 }
 
 

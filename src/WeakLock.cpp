@@ -1,5 +1,5 @@
 #include <async/WeakLock.h>
-#include <Logger.h>
+#include <async/LoggerConfig.h>
 
 using namespace ravensnight::logging;
 
@@ -11,7 +11,7 @@ namespace ravensnight::async {
 
     void WeakLock::lock() {
         if (_locked) {
-            Logger::warn("WeakLock::lock - %s already locked!", _name);
+            _logger.warn("WeakLock::lock - %s already locked!", _name);
         }
         
         _locked = true;
@@ -25,4 +25,5 @@ namespace ravensnight::async {
         _locked = false;
     }
 
+    ClassLogger WeakLock::_logger(LC_ASYNC);
 }

@@ -2,12 +2,18 @@
 #define __WeakLock_h__
 
 #include <Arduino.h>
+#include <ClassLogger.h>
 #include <async/Lockable.h>
+
+using namespace ravensnight::logging;
 
 namespace ravensnight::async {
 
     class WeakLock : public Lockable {
         private:
+
+            static ClassLogger _logger;
+
             bool _locked;
             const char* _name;
 
@@ -21,6 +27,5 @@ namespace ravensnight::async {
     };
 
 }
-
 
 #endif // __WeakLock_h__

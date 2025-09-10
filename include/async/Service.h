@@ -1,14 +1,19 @@
 #ifndef __Service_h__
 #define __Service_h__
 
+#include <ClassLogger.h>
 #include <async/Runnable.h>
 #include <async/Task.h>
+
+using namespace ravensnight::logging;
 
 namespace ravensnight::async {
 
     class Service {
 
         private:
+
+            static ClassLogger _logger;
 
             Runnable* _runnable = 0;
             Task _task;

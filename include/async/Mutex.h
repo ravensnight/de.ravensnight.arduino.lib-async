@@ -3,7 +3,12 @@
 
 #include <Arduino.h>
 #include <mutex>
+
+#include <ClassLogger.h>
 #include <async/Lockable.h>
+
+
+using namespace ravensnight::logging;
 
 namespace ravensnight::async {
 
@@ -11,6 +16,7 @@ namespace ravensnight::async {
 
         private:
 
+            static ClassLogger _logger;
             const char* _name;
             uint16_t _counter;
             std::mutex _mtx;

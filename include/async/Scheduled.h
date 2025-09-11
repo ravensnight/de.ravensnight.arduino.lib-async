@@ -8,8 +8,8 @@ namespace ravensnight::async {
     class Scheduled {
 
         public:
-            virtual void timerExpired(uint16_t timerId);
-
+            virtual void timerExpired(uint16_t timerId, void* param) = 0;
+            
     };
 
 }

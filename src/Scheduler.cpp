@@ -12,6 +12,12 @@ namespace ravensnight::async {
 
 Scheduler::Scheduler(const char* name, uint16_t timeSliceMS) : Service(name) {
     _timeSlice = timeSliceMS;    
+    _stackSize = SCHEDULER_STACKSIZE;
+}
+
+Scheduler::Scheduler(const char* name, uint16_t timeSliceMS, uint32_t stackSize) : Service(name) {
+    _timeSlice = timeSliceMS;    
+    _stackSize = stackSize;
 }
 
 Scheduler::~Scheduler() {
@@ -31,7 +37,7 @@ uint8_t Scheduler::getPriority() {
 }
 
 uint32_t Scheduler::getStackSize() {
-    return SCHEDULER_STACKSIZE;
+    return this->_stackSize;
 }
 
 Runnable* Scheduler::createRunnable() {
@@ -46,7 +52,11 @@ void Scheduler::tick() {
 }
 
 void Scheduler::attach(Scheduled* job, uint16_t timerId, uint16_t delayTimeMS, bool deleteOnClose) {
-    SchedulerEntry* e = new SchedulerEntry(job, timerId, delayTimeMS, deleteOnClose);
+    this->attach(job, timerId, delayTimeMS, deleteOnClose, 0);
+}
+
+void Scheduler::attach(Scheduled* job, uint16_t timerId, uint16_t delayTimeMS, bool deleteOnClose, void* param) {
+    SchedulerEntry* e = new SchedulerEntry(job, timerId, delayTimeMS, deleteOnClose, param);
     _entries.push_back(e);
 }
 
@@ -74,10 +84,11 @@ void SchedulerTask::run() {
  * ----------------------------------------------------------------------------
  */
 
-SchedulerEntry::SchedulerEntry(Scheduled* job, uint16_t timerId, uint16_t delayTimeMS, bool deleteOnClose) {
+SchedulerEntry::SchedulerEntry(Scheduled* job, uint16_t timerId, uint16_t delayTimeMS, bool deleteOnClose, void* param) {
     _runnable = job;
     _timer = 0;
     _timerId = timerId;
+    _param = param;
     _delayTime = delayTimeMS;
     _deleteOnClose = deleteOnClose;
 }
@@ -94,7 +105,7 @@ void SchedulerEntry::update(uint16_t slice) {
 
     _timer += slice;
     if (_timer >= _delayTime) {
-        _runnable->timerExpired(_timerId);
+        _runnable->timerExpired(_timerId, _param);
         _timer = 0;
     }
 }

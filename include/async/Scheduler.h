@@ -30,9 +30,10 @@ namespace ravensnight::async {
             uint16_t    _delayTime = 0;
             Scheduled*  _runnable  = 0;
             bool        _deleteOnClose = false;
+            void*       _param = 0;
 
         public:
-            SchedulerEntry(Scheduled* job, uint16_t timerId, uint16_t delayTimeMS, bool deleteOnClose);
+            SchedulerEntry(Scheduled* job, uint16_t timerId, uint16_t delayTimeMS, bool deleteOnClose, void* param);
             ~SchedulerEntry();
 
             void update(uint16_t slice);
@@ -67,6 +68,7 @@ namespace ravensnight::async {
             
             uint16_t _timeSlice;
             uint16_t _timerId;
+            uint32_t _stackSize;
             std::list<SchedulerEntry*> _entries;         
             
         protected:
@@ -81,6 +83,18 @@ namespace ravensnight::async {
              * @param timeSliceMS the task wait time in milliseconds. This is the minimum resolution of the scheduler.
              */
             Scheduler(const char* name, uint16_t timeSliceMS);
+
+            /**
+             * Create the scheduler.
+             * @param name the name of the scheduler. This is used to identify the scheduler task
+             * @param timeSliceMS the task wait time in milliseconds. This is the minimum resolution of the scheduler.
+             * @param stackSize the stack size to use.
+             */
+            Scheduler(const char* name, uint16_t timeSliceMS, uint32_t stackSize);
+
+            /**
+             * Destructor
+             */
             ~Scheduler();
 
             /**
@@ -91,6 +105,16 @@ namespace ravensnight::async {
              * @param deleteOnClose tell the scheduler, if the scheduled job shall be deleted on destruction of the scheduler itself.
              */
             void attach(Scheduled* job, uint16_t timerId, uint16_t delayTimeMS, bool deleteOnClose);
+
+            /**
+             * Register a single job, which is being called every repeatMS
+             * @param job the Scheduler Job to be registered with the scheduler
+             * @param timerId the unique id of the timer. This is passed to the Scheduled::timeExpired method and may be used to identify the timer, which expired.
+             * @param delayTimeMS the time in millis to wait between multiple expiries.
+             * @param deleteOnClose tell the scheduler, if the scheduled job shall be deleted on destruction of the scheduler itself.
+             * @param param some parameter object to send with the scheduler call.
+             */
+            void attach(Scheduled* job, uint16_t timerId, uint16_t delayTimeMS, bool deleteOnClose, void* param);
 
             /**
              * Service method overrides

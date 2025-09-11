@@ -39,8 +39,14 @@ Runnable* Scheduler::createRunnable() {
     return t;
 }
 
-void Scheduler::attach(Runnable* job, uint16_t delayTimeMS, bool deleteOnClose) {
-    SchedulerEntry* e = new SchedulerEntry(job, delayTimeMS, deleteOnClose);
+void Scheduler::tick() {
+    for (SchedulerEntry* e : _entries) {
+        e->update(_timeSlice);
+    }
+}
+
+void Scheduler::attach(Scheduled* job, uint16_t timerId, uint16_t delayTimeMS, bool deleteOnClose) {
+    SchedulerEntry* e = new SchedulerEntry(job, timerId, delayTimeMS, deleteOnClose);
     _entries.push_back(e);
 }
 
@@ -68,9 +74,10 @@ void SchedulerTask::run() {
  * ----------------------------------------------------------------------------
  */
 
-SchedulerEntry::SchedulerEntry(Runnable* job, uint16_t delayTimeMS, bool deleteOnClose) {
+SchedulerEntry::SchedulerEntry(Scheduled* job, uint16_t timerId, uint16_t delayTimeMS, bool deleteOnClose) {
     _runnable = job;
     _timer = 0;
+    _timerId = timerId;
     _delayTime = delayTimeMS;
     _deleteOnClose = deleteOnClose;
 }
@@ -87,7 +94,7 @@ void SchedulerEntry::update(uint16_t slice) {
 
     _timer += slice;
     if (_timer >= _delayTime) {
-        _runnable->run();
+        _runnable->timerExpired(_timerId);
         _timer = 0;
     }
 }

@@ -24,7 +24,7 @@
     },
     {
       "name": "ravensnight lib-utils",
-      "version": "1.5.2",
+      "version": "1.5.3",
       "platforms": ["espressif32"]
     } 
 

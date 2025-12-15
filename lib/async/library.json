@@ -1,6 +1,6 @@
 {
   "name": "ravensnight lib-async",
-  "version": "1.5.4",
+  "version": "1.6.0",
   "description": "ESP32 Async and Queue Framework.",
   "keywords": "esp32 async threads queue",
   "repository" : {
@@ -24,7 +24,7 @@
     },
     {
       "name": "ravensnight lib-utils",
-      "version": "1.4.3",
+      "version": "1.5.2",
       "platforms": ["espressif32"]
     } 
 

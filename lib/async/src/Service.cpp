@@ -5,7 +5,9 @@
 using namespace ravensnight::async;
 using namespace ravensnight::logging;
 
-Service::Service(const char *name) : _task(name) {
+Service::Service(const char *name) : 
+    _task(name),
+    _runnable(RefType::owned) {
 }
 
 Service::~Service()
@@ -23,10 +25,10 @@ bool Service::install()
         return false;
     }
 
-    if (_runnable == 0) {
+    if (_runnable.isNULL()) {
         _runnable = createRunnable();
-        if (_runnable != 0) {
-            _task.start(_runnable, getPriority(), getStackSize());
+        if (!_runnable.isNULL()) {
+            _task.start(_runnable.get(), getPriority(), getStackSize());
         } else {
             _logger.error("Service::install - createRunnable returned NULL.");
             return false;
@@ -43,10 +45,9 @@ void Service::postUninstall() {
 
 void Service::uninstall()
 {
-    if (_runnable != 0) {
+    if (!_runnable.isNULL()) {
         _task.kill();
-        delete _runnable;
-        _runnable = 0;
+        _runnable.clear();
     }
 
     postUninstall();

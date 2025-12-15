@@ -2,10 +2,12 @@
 #define __Service_h__
 
 #include <ClassLogger.h>
+#include <utils/Ref.hpp>
 #include <async/Runnable.h>
 #include <async/Task.h>
 
 using namespace ravensnight::logging;
+using namespace ravensnight::utils;
 
 namespace ravensnight::async {
 
@@ -15,7 +17,7 @@ namespace ravensnight::async {
 
             static ClassLogger _logger;
 
-            Runnable* _runnable = 0;
+            Ref<Runnable> _runnable;
             Task _task;
 
         protected:

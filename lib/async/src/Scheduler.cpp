@@ -4,6 +4,8 @@
 
 namespace ravensnight::async {
 
+Logger Scheduler::_logger(LC_ASYNC);
+
  /**
   *----------------------------------------------------------------------------
   * Scheduler implementation
@@ -110,6 +112,5 @@ void SchedulerEntry::update(uint16_t slice) {
     }
 }
 
-ClassLogger Scheduler::_logger(LC_ASYNC);
 
 }

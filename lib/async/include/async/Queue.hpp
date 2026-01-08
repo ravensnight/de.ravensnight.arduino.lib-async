@@ -2,12 +2,15 @@
 #define __Queue_h__
 
 #include <Arduino.h>
-#include <ClassLogger.h>
+#include <Logger.h>
 #include <async/LoggerConfig.h>
 
 using namespace ravensnight::logging;
 
 namespace ravensnight::async {
+
+    template <class T>
+    Logger Queue<T>::_logger(LC_ASYNC);
 
     typedef struct {        
         size_t   len;
@@ -24,7 +27,7 @@ namespace ravensnight::async {
     class Queue {
 
         private:
-            static ClassLogger _logger;
+            static Logger _logger;
             size_t _length;
             bool _useHeap;
             uint32_t _ticks;
@@ -145,8 +148,6 @@ namespace ravensnight::async {
             }
     };
 
-    template <class T>
-    ClassLogger Queue<T>::_logger(LC_ASYNC);
 }
 
 

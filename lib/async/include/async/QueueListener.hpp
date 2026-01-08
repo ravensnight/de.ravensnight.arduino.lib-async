@@ -1,7 +1,7 @@
 #ifndef __QueueListener_h__
 #define __QueueListener_h__
 
-#include <ClassLogger.h>
+#include <Logger.h>
 #include <async/LoggerConfig.h>
 
 #include <async/Runnable.h>
@@ -11,11 +11,13 @@
 using namespace ravensnight::logging;
 
 namespace ravensnight::async {
+    template <class T>
+    Logger QueueListener<T>::_logger(LC_ASYNC);
 
     template <class T>
     class QueueListener : public Runnable {
         private:
-            static ClassLogger _logger;
+            static Logger _logger;
 
             Receiver<T>* _receiver = 0;
             Queue<T>* _queue = 0;
@@ -76,8 +78,6 @@ namespace ravensnight::async {
             }
     };
 
-    template <class T>
-    ClassLogger QueueListener<T>::_logger(LC_ASYNC);
 }
 
 #endif //  __QueueListener_h__

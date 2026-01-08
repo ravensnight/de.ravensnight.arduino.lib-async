@@ -2,8 +2,11 @@
 #include <async/LoggerConfig.h>
 #include <async/LockGuard.h>
 
-using namespace ravensnight::async;
 using namespace ravensnight::logging;
+
+namespace ravensnight::async {
+
+Logger Service::_logger(LC_ASYNC);
 
 Service::Service(const char *name) : 
     _task(name),
@@ -53,4 +56,4 @@ void Service::uninstall()
     postUninstall();
 }
 
-ClassLogger Service::_logger(LC_ASYNC);
+}

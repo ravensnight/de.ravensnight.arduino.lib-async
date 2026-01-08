@@ -4,6 +4,7 @@
 using namespace ravensnight::logging;
 
 namespace ravensnight::async {
+    Logger WeakLock::_logger(LC_ASYNC);
 
     WeakLock::WeakLock(const char* name) {
         _name = name;
@@ -25,5 +26,4 @@ namespace ravensnight::async {
         _locked = false;
     }
 
-    ClassLogger WeakLock::_logger(LC_ASYNC);
 }

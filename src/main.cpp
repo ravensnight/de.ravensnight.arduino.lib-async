@@ -1,17 +1,24 @@
 #include <Arduino.h>
 
 #include <Logger.h>
+#include <SerialLogAdapter.h>
 #include <async/Service.h>
 #include <async/Runnable.h>
 
 using namespace ravensnight::async;
 using namespace ravensnight::logging;
 
+namespace ravensnigh::logging {
+    LogLevel getLogLevel(const char* category) {
+        return LogLevel::trace;
+    }
+}
+
 class Runner : public Runnable {
 
     public:
         void run() {
-            Logger::debug("Run once.");
+            Logger::root.debug("Run once.");
         }
 };
 
@@ -37,8 +44,11 @@ class Test : public Service {
 };
 
 Test tmp;
+SerialLogAdapter logAdapter;
 
 void setup() {
+
+    Logger::setup(&logAdapter);
     tmp.install();
 }
 

@@ -2,7 +2,7 @@
 #define __Scheduler_h__
 
 #include <Arduino.h>
-#include <ClassLogger.h>
+#include <Logger.h>
 #include <list>
 
 #include <async/Scheduled.h>
@@ -64,7 +64,7 @@ namespace ravensnight::async {
 
         private:
 
-            static ClassLogger _logger;
+            static Logger _logger;
             
             uint16_t _timeSlice;
             uint16_t _timerId;

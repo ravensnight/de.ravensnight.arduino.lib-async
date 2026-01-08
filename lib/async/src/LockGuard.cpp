@@ -4,6 +4,7 @@
 using namespace ravensnight::logging;
 
 namespace ravensnight::async {
+    Logger LockGuard::_logger(LC_ASYNC);
 
     LockGuard::LockGuard(Lockable* lockable) {
         _logger.trace("LockGuard - lock");
@@ -16,5 +17,4 @@ namespace ravensnight::async {
         _mtx->unlock();
     }
 
-    ClassLogger LockGuard::_logger(LC_ASYNC);
 }

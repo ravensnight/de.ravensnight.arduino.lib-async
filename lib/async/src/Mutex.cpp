@@ -4,6 +4,7 @@
 using namespace ravensnight::logging;
 
 namespace ravensnight::async {
+    Logger Mutex::_logger(LC_ASYNC);
 
     Mutex::Mutex(const char* name) {
         _name = name;
@@ -28,7 +29,6 @@ namespace ravensnight::async {
         _counter--;
     }
 
-    ClassLogger Mutex::_logger(LC_ASYNC);
 
 }
 

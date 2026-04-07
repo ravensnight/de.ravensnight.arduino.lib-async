@@ -11,8 +11,6 @@
 using namespace ravensnight::logging;
 
 namespace ravensnight::async {
-    template <class T>
-    Logger QueueListener<T>::_logger(LC_ASYNC);
 
     template <class T>
     class QueueListener : public Runnable {
@@ -77,6 +75,9 @@ namespace ravensnight::async {
                 }
             }
     };
+
+    template <class T>
+    Logger QueueListener<T>::_logger(LC_ASYNC);
 
 }
 
